@@ -43,7 +43,7 @@ const handler = async (m, { conn, args, usedPrefix }) => {
             ]
         }));
 
-        let spotifySections = spotifyResults.map((s, index) => ({
+        let spotifySections = spotifyResults.length ? spotifyResults.map((s, index) => ({
             title: `${index + 1}┃ ${s.titulo}`,
             rows: [
                 {
@@ -52,7 +52,14 @@ const handler = async (m, { conn, args, usedPrefix }) => {
                     id: s.url
                 }
             ]
-        }));
+        })) : [{
+            title: 'Sin resultados',
+            rows: [{
+                title: 'No se encontraron canciones en Spotify',
+                description: 'Intenta con otro término de búsqueda',
+                id: '.'
+            }]
+        }];
 
         await conn.sendMessage(m.chat, {
             image: thumbnail,
@@ -134,11 +141,11 @@ async function searchSpotify(query) {
     try {
         const response = await fetch(`https://delirius-apiofc.vercel.app/search/spotify?q=${encodeURIComponent(query)}`);
         const data = await response.json();
-        return data.tracks.slice(0, 10).map(track => ({
+        return data.tracks.length ? data.tracks.slice(0, 10).map(track => ({
             titulo: track.name,
             album: track.album.name,
             url: track.external_urls.spotify
-        }));
+        })) : [];
     } catch (error) {
         console.error('Error en búsqueda de Spotify:', error.message);
         return [];
