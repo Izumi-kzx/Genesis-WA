@@ -1,5 +1,5 @@
 {
-"name": "Genesis Ai",
+"name": "confirmar",
 "version": "2.0.7",
 "description": "WhatsApp Ai",
 "main": "index.js",
@@ -24,6 +24,7 @@
 },
 "collaborators": {
 "col1": "Darkcore",
+"col2": "Izumi",
 },
 "repository": {
 "type": "git",
