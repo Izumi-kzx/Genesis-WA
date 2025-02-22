@@ -9,42 +9,42 @@ const handler = async (m, { conn, args, usedPrefix }) => {
     try {
         let searchResults = await searchVideos(args.join(" "));
         let spotifyResults = await searchSpotify(args.join(" "));
-
+        
         if (!searchResults.length && !spotifyResults.length) throw new Error('No se encontraron resultados.');
 
-        let video = searchResults[0] || {};
-        let thumbnail = video.miniatura ? await (await fetch(video.miniatura)).buffer() : null;
+        let video = searchResults[0];
+        let thumbnail = await (await fetch(video.miniatura)).buffer();
 
         let messageText = `Y O U T U B E _ P L A Y\n\n`;
-        messageText += `• *Título:* ${video.titulo || 'No disponible'}\n`;
+        messageText += `• *Título:* ${video.titulo}\n`;
         messageText += `• *Duración:* ${video.duracion || 'No disponible'}\n`;
         messageText += `• *Autor:* ${video.canal || 'Desconocido'}\n`;
-        messageText += `• *Publicado:* ${convertTimeToSpanish(video.publicado || 'No disponible')}\n`;
-        messageText += `• *Enlace:* ${video.url || 'No disponible'}\n`;
+        messageText += `• *Publicado:* ${convertTimeToSpanish(video.publicado)}\n`;
+        messageText += `• *Enlace:* ${video.url}\n`;
 
         let ytSections = searchResults.slice(1, 11).map((v, index) => ({
             title: `${index + 1}┃ ${v.titulo}`,
             rows: [
                 {
                     title: `🎶 Descargar MP3`,
-                    description: `Duración: ${v.duracion || 'No disponible'}`,
+                    description: `Duración: ${v.duracion || 'No disponible'}`, 
                     id: `${usedPrefix}ytmp3 ${v.url}`
                 },
                 {
                     title: `🎥 Descargar MP4`,
-                    description: `Duración: ${v.duracion || 'No disponible'}`,
+                    description: `Duración: ${v.duracion || 'No disponible'}`, 
                     id: `${usedPrefix}ytmp4 ${v.url}`
                 }
             ]
         }));
 
-        let spotifySections = spotifyResults.map((s, index) => ({
+        let spotifySections = spotifyResults.slice(0, 10).map((s, index) => ({
             title: `${index + 1}┃ ${s.titulo}`,
             rows: [
                 {
-                    title: `🎵 Escuchar en Spotify`,
-                    description: `Artista: ${s.artista}`,
-                    id: s.url
+                    title: `🎶 Descargar MP3`,
+                    description: `Duración: ${s.duracion || 'No disponible'}`, 
+                    id: `${usedPrefix}spotifymp3 ${s.url}`
                 }
             ]
         }));
@@ -74,7 +74,7 @@ const handler = async (m, { conn, args, usedPrefix }) => {
                     nativeFlowInfo: {
                         name: 'single_select',
                         paramsJson: JSON.stringify({
-                            title: 'Más resultados de YouTube',
+                            title: 'Más resultados YouTube',
                             sections: ytSections,
                         }),
                     },
@@ -84,7 +84,7 @@ const handler = async (m, { conn, args, usedPrefix }) => {
                     nativeFlowInfo: {
                         name: 'single_select',
                         paramsJson: JSON.stringify({
-                            title: 'Resultados de Spotify',
+                            title: 'Más resultados Spotify',
                             sections: spotifySections,
                         }),
                     },
@@ -129,14 +129,13 @@ async function searchSpotify(query) {
     try {
         const res = await fetch(`https://delirius-apiofc.vercel.app/search/spotify?q=${encodeURIComponent(query)}`);
         const data = await res.json();
-        if (!data || !data.tracks || !data.tracks.items) return [];
-        return data.tracks.items.slice(0, 10).map(track => ({
-            titulo: track.name,
-            artista: track.artists.map(a => a.name).join(', '),
-            url: track.external_urls.spotify
+        return data.data.slice(0, 10).map(track => ({
+            titulo: track.title,
+            url: track.url,
+            duracion: track.duration || 'No disponible'
         }));
     } catch (error) {
-        console.error('Error en búsqueda de Spotify:', error.message);
+        console.error('Error en Spotify API:', error.message);
         return [];
     }
 }
