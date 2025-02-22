@@ -20,11 +20,11 @@
 },
 "homepage": "https://github.com/DanielDiod/Ai-Otho",
 "author": {
-"name": "Izumi-kzx"
+"name": "DanielDiod"
 },
 "collaborators": {
-"col1": "Darkcore",
-"col2": "Izumi",
+"col1": "Dev-Diego",
+"col2": "GataNina-Li"
 },
 "repository": {
 "type": "git",
@@ -35,7 +35,7 @@
 },
 "license": "GPL-3.0-or-later",
 "dependencies": {
-"@whiskeysockets/baileys": "npm:@im-dims/baileys-md",
+"@whiskeysockets/baileys": "github:ds6/bails",
 "@StarlightsTeam/Scraper": "github:StarlightsTeam/StarlightsTeam-Scraper",
 "@adiwajshing/keyed-db": "^0.2.4",
 "@bochilteam/scraper": "^4.2.4",
