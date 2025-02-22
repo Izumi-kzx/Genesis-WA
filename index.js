@@ -23,7 +23,7 @@ if (collaborators.hasOwnProperty(key)) {
 activeCollaborators += collaborators[key] + ', '
 }}
 activeCollaborators = activeCollaborators.slice(0, -2);
-cfonts.say('ai\notho md', {
+cfonts.say('Genesis\nAi', {
 align: 'center',           
 gradient: ['red', 'blue'] 
 })
