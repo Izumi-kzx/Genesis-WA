@@ -42,9 +42,9 @@ const handler = async (m, { conn, args, usedPrefix }) => {
             title: `${index + 1}┃ ${s.titulo}`,
             rows: [
                 {
-                    title: `🎶 Descargar MP3`,
+                    title: `🎶 Descargar Audio`,
                     description: `Duración: ${s.duracion || 'No disponible'}`, 
-                    id: `${usedPrefix}spotifymp3 ${s.url}`
+                    id: `${usedPrefix}spotify ${s.url}`
                 }
             ]
         }));
