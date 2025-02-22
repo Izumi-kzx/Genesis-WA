@@ -25,7 +25,7 @@ let handler = async (m, { conn, usedPrefix, text, args, command }) => {
                 title: 'һ᥆ᥣᥲ s᥆ᥡ іzᥙmі-kz᥊ ᥱᥣ mᥱȷ᥆r',
                 body: dev,
                 thumbnailUrl: 'https://i.ibb.co/44XMFDQ/file.jpg',
-                sourceUrl: canal,
+                sourceUrl: null,
                 mediaType: 1,
                 renderLargerThumbnail: true
             }
