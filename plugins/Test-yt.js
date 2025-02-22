@@ -1,13 +1,16 @@
 import yts from 'yt-search'; import fetch from 'node-fetch'; import { prepareWAMessageMedia, generateWAMessageFromContent } from '@whiskeysockets/baileys';
 
-const handler = async (m, { conn, args, usedPrefix }) => { if (!args[0]) return conn.reply(m.chat, 'Por favor ingresa un término de búsqueda', m);
+const handler = async (m, { conn, args, usedPrefix }) => { if (!args[0]) { return conn.reply(m.chat, 'Por favor ingresa un término de búsqueda', m); }
 
 await m.react('🕓');
+
 try {
     let searchResults = await searchVideos(args.join(" "));
     let spotifyResults = await searchSpotify(args.join(" "));
-    
-    if (!searchResults.length) throw new Error('No se encontraron resultados en YouTube.');
+
+    if (!searchResults.length) {
+        throw new Error('No se encontraron resultados en YouTube.');
+    }
 
     let video = searchResults[0];
     let thumbnail = await (await fetch(video.miniatura)).buffer();
@@ -24,12 +27,12 @@ try {
         rows: [
             {
                 title: `🎶 Descargar MP3`,
-                description: `Duración: ${v.duracion || 'No disponible'}`, 
+                description: `Duración: ${v.duracion || 'No disponible'}`,
                 id: `${usedPrefix}ytmp3 ${v.url}`
             },
             {
                 title: `🎥 Descargar MP4`,
-                description: `Duración: ${v.duracion || 'No disponible'}`, 
+                description: `Duración: ${v.duracion || 'No disponible'}`,
                 id: `${usedPrefix}ytmp4 ${v.url}`
             }
         ]
@@ -59,12 +62,12 @@ try {
             {
                 buttonId: `${usedPrefix}ytmp3 ${video.url}`,
                 buttonText: { displayText: 'ᯓᡣ𐭩 ᥲᥙძі᥆' },
-                type: 1,
+                type: 1
             },
             {
                 buttonId: `${usedPrefix}ytmp4 ${video.url}`,
                 buttonText: { displayText: 'ᯓᡣ𐭩 ᥎іძᥱ᥆' },
-                type: 1,
+                type: 1
             },
             {
                 type: 4,
@@ -72,9 +75,9 @@ try {
                     name: 'single_select',
                     paramsJson: JSON.stringify({
                         title: 'Más resultados de YouTube',
-                        sections: youtubeSections,
-                    }),
-                },
+                        sections: youtubeSections
+                    })
+                }
             },
             {
                 type: 4,
@@ -82,10 +85,10 @@ try {
                     name: 'single_select',
                     paramsJson: JSON.stringify({
                         title: 'Resultados de Spotify',
-                        sections: spotifySections,
-                    }),
-                },
-            },
+                        sections: spotifySections
+                    })
+                }
+            }
         ],
         headerType: 1,
         viewOnce: true
@@ -100,11 +103,7 @@ try {
 
 };
 
-handler.help = ['play <texto>']; 
-handler.tags = ['dl']; 
-handler.command = ['playtest']; 
-
-export default handler;
+handler.help = ['play <texto>']; handler.tags = ['dl']; handler.command = ['play']; export default handler;
 
 async function searchVideos(query) { try { const res = await yts(query); return res.videos.slice(0, 10).map(video => ({ titulo: video.title, url: video.url, miniatura: video.thumbnail, canal: video.author.name, publicado: video.timestamp || 'No disponible', vistas: video.views || 'No disponible', duracion: video.duration.timestamp || 'No disponible' })); } catch (error) { console.error('Error en yt-search:', error.message); return []; } }
 
