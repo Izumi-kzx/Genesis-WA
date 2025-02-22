@@ -3,31 +3,26 @@ import fetch from 'node-fetch';
 import { prepareWAMessageMedia, generateWAMessageFromContent } from '@whiskeysockets/baileys';
 
 const handler = async (m, { conn, args, usedPrefix }) => {
-    if (!args[0]) {
-        return conn.reply(m.chat, '*`Por favor ingresa un término de búsqueda`*', m);
-    }
+    if (!args[0]) return conn.reply(m.chat, '*`Por favor ingresa un término de búsqueda`*', m);
 
     await m.react('🕓');
-
     try {
         let searchResults = await searchVideos(args.join(" "));
         let spotifyResults = await searchSpotify(args.join(" "));
 
-        if (!searchResults.length) {
-            throw new Error('No se encontraron resultados en YouTube.');
-        }
+        if (!searchResults.length && !spotifyResults.length) throw new Error('No se encontraron resultados.');
 
-        let video = searchResults[0];
-        let thumbnail = await (await fetch(video.miniatura)).buffer();
+        let video = searchResults[0] || {};
+        let thumbnail = video.miniatura ? await (await fetch(video.miniatura)).buffer() : null;
 
         let messageText = `Y O U T U B E _ P L A Y\n\n`;
-        messageText += `• *Título:* ${video.titulo}\n`;
+        messageText += `• *Título:* ${video.titulo || 'No disponible'}\n`;
         messageText += `• *Duración:* ${video.duracion || 'No disponible'}\n`;
         messageText += `• *Autor:* ${video.canal || 'Desconocido'}\n`;
-        messageText += `• *Publicado:* ${convertTimeToSpanish(video.publicado)}\n`;
-        messageText += `• *Enlace:* ${video.url}\n`;
+        messageText += `• *Publicado:* ${convertTimeToSpanish(video.publicado || 'No disponible')}\n`;
+        messageText += `• *Enlace:* ${video.url || 'No disponible'}\n`;
 
-        let youtubeSections = searchResults.slice(1, 11).map((v, index) => ({
+        let ytSections = searchResults.slice(1, 11).map((v, index) => ({
             title: `${index + 1}┃ ${v.titulo}`,
             rows: [
                 {
@@ -43,23 +38,16 @@ const handler = async (m, { conn, args, usedPrefix }) => {
             ]
         }));
 
-        let spotifySections = spotifyResults.length ? spotifyResults.map((s, index) => ({
+        let spotifySections = spotifyResults.map((s, index) => ({
             title: `${index + 1}┃ ${s.titulo}`,
             rows: [
                 {
                     title: `🎵 Escuchar en Spotify`,
-                    description: `Álbum: ${s.album || 'No disponible'}`,
+                    description: `Artista: ${s.artista}`,
                     id: s.url
                 }
             ]
-        })) : [{
-            title: 'Sin resultados',
-            rows: [{
-                title: 'No se encontraron canciones en Spotify',
-                description: 'Intenta con otro término de búsqueda',
-                id: '.'
-            }]
-        }];
+        }));
 
         await conn.sendMessage(m.chat, {
             image: thumbnail,
@@ -74,12 +62,12 @@ const handler = async (m, { conn, args, usedPrefix }) => {
                 {
                     buttonId: `${usedPrefix}ytmp3 ${video.url}`,
                     buttonText: { displayText: 'ᯓᡣ𐭩 ᥲᥙძі᥆' },
-                    type: 1
+                    type: 1,
                 },
                 {
                     buttonId: `${usedPrefix}ytmp4 ${video.url}`,
                     buttonText: { displayText: 'ᯓᡣ𐭩 ᥎іძᥱ᥆' },
-                    type: 1
+                    type: 1,
                 },
                 {
                     type: 4,
@@ -87,9 +75,9 @@ const handler = async (m, { conn, args, usedPrefix }) => {
                         name: 'single_select',
                         paramsJson: JSON.stringify({
                             title: 'Más resultados de YouTube',
-                            sections: youtubeSections
-                        })
-                    }
+                            sections: ytSections,
+                        }),
+                    },
                 },
                 {
                     type: 4,
@@ -97,10 +85,10 @@ const handler = async (m, { conn, args, usedPrefix }) => {
                         name: 'single_select',
                         paramsJson: JSON.stringify({
                             title: 'Resultados de Spotify',
-                            sections: spotifySections
-                        })
-                    }
-                }
+                            sections: spotifySections,
+                        }),
+                    },
+                },
             ],
             headerType: 1,
             viewOnce: true
@@ -116,7 +104,7 @@ const handler = async (m, { conn, args, usedPrefix }) => {
 
 handler.help = ['play *<texto>*'];
 handler.tags = ['dl'];
-handler.command = ['playytt'];
+handler.command = ['play'];
 export default handler;
 
 async function searchVideos(query) {
@@ -139,13 +127,14 @@ async function searchVideos(query) {
 
 async function searchSpotify(query) {
     try {
-        const response = await fetch(`https://delirius-apiofc.vercel.app/search/spotify?q=${encodeURIComponent(query)}`);
-        const data = await response.json();
-        return data.tracks.length ? data.tracks.slice(0, 10).map(track => ({
+        const res = await fetch(`https://delirius-apiofc.vercel.app/search/spotify?q=${encodeURIComponent(query)}`);
+        const data = await res.json();
+        if (!data || !data.tracks || !data.tracks.items) return [];
+        return data.tracks.items.slice(0, 10).map(track => ({
             titulo: track.name,
-            album: track.album.name,
+            artista: track.artists.map(a => a.name).join(', '),
             url: track.external_urls.spotify
-        })) : [];
+        }));
     } catch (error) {
         console.error('Error en búsqueda de Spotify:', error.message);
         return [];
