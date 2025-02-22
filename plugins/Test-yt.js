@@ -100,7 +100,11 @@ try {
 
 };
 
-handler.help = ['play <texto>']; handler.tags = ['dl']; handler.command = ['play']; export default handler;
+handler.help = ['play <texto>']; 
+handler.tags = ['dl']; 
+handler.command = ['playtest']; 
+
+export default handler;
 
 async function searchVideos(query) { try { const res = await yts(query); return res.videos.slice(0, 10).map(video => ({ titulo: video.title, url: video.url, miniatura: video.thumbnail, canal: video.author.name, publicado: video.timestamp || 'No disponible', vistas: video.views || 'No disponible', duracion: video.duration.timestamp || 'No disponible' })); } catch (error) { console.error('Error en yt-search:', error.message); return []; } }
 
