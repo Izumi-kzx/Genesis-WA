@@ -74,7 +74,7 @@ const handler = async (m, { conn, args, usedPrefix }) => {
                     nativeFlowInfo: {
                         name: 'single_select',
                         paramsJson: JSON.stringify({
-                            title: 'Más resultados YouTube',
+                            title: '⊹₊ ⋆ᯓᡣ𐭩 rᥱsᥙᥣ𝗍ᥲძ᥆s ᥡ᥆ᥙ𝗍ᥙᑲᥱ',
                             sections: ytSections,
                         }),
                     },
@@ -84,7 +84,7 @@ const handler = async (m, { conn, args, usedPrefix }) => {
                     nativeFlowInfo: {
                         name: 'single_select',
                         paramsJson: JSON.stringify({
-                            title: 'Más resultados Spotify',
+                            title: '⊹₊ ⋆ᯓᡣ𐭩 rᥱsᥙᥣ𝗍ᥲძ᥆s s⍴᥆𝗍і𝖿ᥡ',
                             sections: spotifySections,
                         }),
                     },
