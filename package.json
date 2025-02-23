@@ -38,6 +38,7 @@
     "dependencies": {
         "@adiwajshing/keyed-db": "^0.2.4",
         "@bochilteam/scraper": "^4.2.4",
+        "@StarlightsTeam/Scraper": "github:StarlightsTeam/StarlightsTeam-Scraper",
         "@bochilteam/scraper-sosmed": "^1.0.5",
         "@ibaraki-douji/pixivts": "^2.4.1",
         "@vitalets/google-translate-api": "^8.0.0",
@@ -51,7 +52,7 @@
         "axios": "^1.1.2",
         "bing-translate-api": "^4.0.2",
         "boxen": "^7.1.1",
-        "canvas": "^2.11.2",
+        "canvafy": "^7.2.0",
         "cfonts": "^3.3.0",
         "chalk": "^5.1.0",
         "cheerio": "github:AikerDev/cheeiro",
