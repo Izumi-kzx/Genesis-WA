@@ -7,7 +7,7 @@ import cfonts from 'cfonts';
 import { createInterface } from 'readline';
 import yargs from 'yargs';
 import chalk from 'chalk';
-import { execSync } from 'child_process';  // Importa execSync
+import { execSync } from 'child_process';
 
 console.log('\n🍮 Iniciando Génesis-Ai...');
 
