@@ -18,7 +18,7 @@ font: 'chrome',
 align: 'center',
 gradient: ['red', 'magenta']
 });
-say(`Made By - Izumi-kzx`, {
+say(`Creador » Izumi-kzx\nColaborador » Darkcore\nTeam » Code Titans`, {
 font: 'console',
 align: 'center',
 gradient: ['red', 'magenta']
