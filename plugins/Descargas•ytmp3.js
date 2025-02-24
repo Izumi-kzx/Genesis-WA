@@ -1,31 +1,32 @@
-import axios from 'axios';
+import fetch from 'node-fetch';
 
-let handler = async (m, { conn, text }) => {
-    if (!text) return m.reply('❌ Ingresa una URL de YouTube.');
-
+let handler = async (m, { conn, args }) => {
+    if (!args[0]) return conn.reply(m.chat, '⚠️ Proporciona un enlace de YouTube.', m);
     await m.react('⏳');
-
-    let apiUrl = `https://good-camel-seemingly.ngrok-free.app/download/mp3?url=${encodeURIComponent(text)}`;
+    let url = args[0];
+    let api = `https://api.agungny.my.id/api/youtube-audio?url=${encodeURIComponent(url)}`;
 
     try {
-        let { data } = await axios.get(apiUrl);
+        let res = await fetch(api);
+        let json = await res.json();
 
-        const title = data.title;
-        const thumbnail = data.thumbnail;
-        const downloadUrl = data.download_url;
+        if (!json.status || !json.result) {
+            return conn.reply(m.chat, '❌ No se pudo obtener el audio.', m);
+        }
+
+        let { title, url_audio } = json.result;
 
         await conn.sendMessage(m.chat, { 
-            audio: { url: downloadUrl }, 
-            mimetype: 'audio/mpeg',  
-            fileName: `${title}.mp3`
+            audio: { url: url_audio }, 
+            mimetype: 'audio/mp4', 
+            fileName: `${title}.mp3` 
         }, { quoted: m });
-
-        await m.react('✅');
-    } catch (error) {
-        console.error("❌ Error en la descarga:", error);
-        await m.react('❌');
+      await m.react('✅');
+    } catch (e) {
+     await m.react('❌');
     }
 };
 
-handler.command = /^ytmp3/i; 
-export default handler;
+handler.command = /^(ytmp3|yta)$/i;
+module.exports = handler;
+
